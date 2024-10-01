@@ -63,7 +63,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '21'
+          java-version: '17'
           cache: 'gradle'
 
       - name: Change wrapper permissions
@@ -72,9 +72,12 @@ jobs:
       - name: Install libncurses
         run: sudo apt install libncurses5
 
+      - name: Run gradle tests
+        run: ./gradlew test
+
       # Run Build Project
       - name: Build gradle project
-        run: ./gradlew build
+        run: ./gradlew build --stacktrace --info
 
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
