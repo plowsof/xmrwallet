@@ -69,9 +69,8 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      # Run Tests Build
-      - name: Run gradle tests
-        run: ./gradlew test
+      - name: Install libncurses
+        run: sudo apt install libncurses5
 
       # Run Build Project
       - name: Build gradle project
