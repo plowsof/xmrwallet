@@ -1,0 +1,47 @@
+name: build-apk
+on: [push]
+jobs:
+  build-libs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install Make
+      - name: Install Make
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make
+
+      # Install Docker
+      - name: Install Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            ca-certificates \
+            curl \
+            gnupg \
+            lsb-release
+          sudo mkdir -m 0755 -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+            $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+      - name: Clone monero repository
+        run: |
+          git clone https://github.com/m2049r/monero.git
+          cd monero
+          git fetch
+          git checkout release-v0.18.3.3-monerujo-v4.0.6
+          git submodule update --init --force
+
+      - name: Create symlink
+        run: |
+          ln -s $(pwd)/monero $(pwd)/../xmrwallet/external-libs/monero
+
+      - name: Build lib
+        run: |
+          cd $(pwd)/../xmrwallet/external-libs
+          make
