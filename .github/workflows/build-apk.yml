@@ -70,7 +70,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Install libncurses
-        run: sudo apt install libncurses5
+        run: sudo apt-get install libncurses5 libncurses5-dev libncursesw5-dev
 
       - name: Run gradle tests
         run: ./gradlew test
